@@ -116,14 +116,19 @@ The password must never be placed in the JWT payload.
 ## Screenshots
 Place your actual Postman screenshots in the `screenshots/` folder before GitHub submission. Recommended screenshots:
 - `register-success.png`
+<img width="1296" height="640" alt="image" src="https://github.com/user-attachments/assets/b519a3c3-9bc6-4e83-84a7-37763da1b5e2" />
 
 - `register-duplicate.png`
+<img width="1265" height="486" alt="image" src="https://github.com/user-attachments/assets/f56fa707-e0c0-43b9-a882-8365fdbf586c" />
 
 - `login-success.png`
+<img width="1347" height="426" alt="image" src="https://github.com/user-attachments/assets/a8242e4c-3881-442d-9456-8e69ce24aaa3" />
 
 - `login-wrong-password.png`
+<img width="1325" height="402" alt="image" src="https://github.com/user-attachments/assets/b09b4694-f2ea-4548-8f1b-811a1291393e" />
 
 - `login-unknown-user.png`
+<img width="1271" height="395" alt="image" src="https://github.com/user-attachments/assets/87ccda59-e622-473f-87dd-c69f488332bb" />
 
 
 > Actual screenshots are not fabricated in this project. Run the API and capture your own Postman results.
