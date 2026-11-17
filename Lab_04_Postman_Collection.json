@@ -1,0 +1,14 @@
+{
+  "info": {
+    "name": "Lab 4 - Registration Login JWT - G. Nonitha",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [{"key":"baseUrl","value":"http://localhost:3000"}],
+  "item": [
+    {"name":"Register - Success","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"username\": \"nonitha\",\n  \"name\": \"G. Nonitha\",\n  \"password\": \"Nonitha123\"\n}"},"url":"{{baseUrl}}/register"}},
+    {"name":"Register - Duplicate Failure","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"username\": \"nonitha\",\n  \"name\": \"G. Nonitha\",\n  \"password\": \"Nonitha123\"\n}"},"url":"{{baseUrl}}/register"}},
+    {"name":"Login - Success","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"username\": \"nonitha\",\n  \"password\": \"Nonitha123\"\n}"},"url":"{{baseUrl}}/login"}},
+    {"name":"Login - Wrong Password","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"username\": \"nonitha\",\n  \"password\": \"WrongPassword123\"\n}"},"url":"{{baseUrl}}/login"}},
+    {"name":"Login - Unknown User","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"username\": \"unknownuser\",\n  \"password\": \"AnyPassword123\"\n}"},"url":"{{baseUrl}}/login"}}
+  ]
+}

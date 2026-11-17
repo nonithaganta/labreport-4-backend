@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab 4: Registration, Login & JWT Test Console</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --border: #334155;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-hover: #0284c7;
+      --green: #22c55e;
+      --green-bg: rgba(34, 197, 94, 0.15);
+      --red: #ef4444;
+      --red-bg: rgba(239, 68, 68, 0.15);
+      --orange: #f59e0b;
+      --orange-bg: rgba(245, 158, 11, 0.15);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); padding: 24px; line-height: 1.5; }
+    .container { max-width: 1000px; margin: 0 auto; }
+    header { border-bottom: 1px solid var(--border); padding-bottom: 16px; margin-bottom: 24px; }
+    h1 { font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 8px; }
+    .meta { display: flex; flex-wrap: wrap; gap: 16px; font-size: 14px; color: var(--text-muted); }
+    .meta span strong { color: var(--text); }
+    
+    .actions-bar {
+      display: flex; gap: 12px; align-items: center; justify-content: space-between;
+      background: var(--card-bg); padding: 14px 20px; border-radius: 8px; border: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+    .btn {
+      background: var(--accent); color: #0f172a; border: none; padding: 8px 16px;
+      border-radius: 6px; font-weight: 600; cursor: pointer; transition: 0.2s; font-size: 14px;
+    }
+    .btn:hover { background: var(--accent-hover); color: #fff; }
+    .btn-secondary { background: #334155; color: #fff; }
+    .btn-secondary:hover { background: #475569; }
+    .btn-outline-red { background: transparent; color: #f87171; border: 1px solid #ef4444; }
+    .btn-outline-red:hover { background: var(--red-bg); }
+
+    .card {
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px;
+      margin-bottom: 20px; overflow: hidden;
+    }
+    .card-header {
+      padding: 12px 18px; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .card-title { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+    .badge-method {
+      background: #f97316; color: #fff; font-size: 12px; font-weight: 700;
+      padding: 3px 8px; border-radius: 4px;
+    }
+    .endpoint-url { font-family: monospace; font-size: 14px; color: #cbd5e1; }
+    
+    .card-body { padding: 16px 18px; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 768px) { .card-body { grid-template-columns: 1fr; } }
+    
+    .section-title { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 8px; font-weight: 600; }
+    pre, textarea {
+      width: 100%; background: #0b1120; border: 1px solid var(--border); border-radius: 6px;
+      padding: 12px; font-family: 'Consolas', 'Monaco', monospace; font-size: 13px; color: #e2e8f0;
+      resize: vertical; min-height: 120px; outline: none;
+    }
+    .response-box {
+      background: #0b1120; border: 1px solid var(--border); border-radius: 6px;
+      padding: 12px; min-height: 120px; display: flex; flex-direction: column;
+    }
+    .response-status-bar {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
+      font-size: 13px; font-weight: 600;
+    }
+    .status-badge { padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: 700; }
+    .status-200, .status-201 { color: var(--green); background: var(--green-bg); }
+    .status-400 { color: var(--red); background: var(--red-bg); }
+    .card-footer {
+      padding: 10px 18px; border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(0,0,0,0.1);
+    }
+    .info-note { font-size: 12px; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Lab 4: Registration, Login & JWT — Interactive Test Console</h1>
+      <div class="meta">
+        <span><strong>Student:</strong> G. Nonitha</span>
+        <span><strong>Reg No:</strong> 252U1R6073</span>
+        <span><strong>Class:</strong> 207-AIML-2b</span>
+        <span><strong>Server:</strong> <code style="color:var(--accent);">http://localhost:3000</code></span>
+      </div>
+    </header>
+
+    <div class="actions-bar">
+      <div>
+        <strong>Localhost API Tester</strong>
+        <p class="info-note">Test all 5 required lab scenarios directly in your browser.</p>
+      </div>
+      <div style="display:flex; gap:10px;">
+        <button class="btn-outline-red btn" onclick="resetDatabase()">Reset Database</button>
+        <button class="btn" onclick="runAllTests()">⚡ Run All 5 Tests in Order</button>
+      </div>
+    </div>
+
+    <!-- Test 1: Register Success -->
+    <div class="card" id="card-1">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="badge-method">POST</span>
+          <span class="endpoint-url">http://localhost:3000/register</span>
+          <span style="font-size:13px; color:var(--text-muted);">(1. register-success.png)</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div>
+          <div class="section-title">Request Body (JSON)</div>
+          <textarea id="req-1">{
+  "username": "nonitha",
+  "name": "G. Nonitha",
+  "password": "Nonitha123"
+}</textarea>
+        </div>
+        <div>
+          <div class="section-title">Live Response</div>
+          <div class="response-box">
+            <div class="response-status-bar">
+              <span id="status-1" class="status-badge">Waiting...</span>
+              <span id="time-1" style="color:var(--text-muted); font-size:12px;"></span>
+            </div>
+            <pre id="res-1" style="border:none; padding:0; min-height:auto;">Click "Send Request" to test</pre>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="info-note">Expected: Status 201 Created with registered user object</span>
+        <button class="btn" onclick="sendRequest(1, '/register')">Send Request</button>
+      </div>
+    </div>
+
+    <!-- Test 2: Register Duplicate -->
+    <div class="card" id="card-2">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="badge-method">POST</span>
+          <span class="endpoint-url">http://localhost:3000/register</span>
+          <span style="font-size:13px; color:var(--text-muted);">(2. register-duplicate.png)</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div>
+          <div class="section-title">Request Body (JSON)</div>
+          <textarea id="req-2">{
+  "username": "nonitha",
+  "name": "G. Nonitha",
+  "password": "Nonitha123"
+}</textarea>
+        </div>
+        <div>
+          <div class="section-title">Live Response</div>
+          <div class="response-box">
+            <div class="response-status-bar">
+              <span id="status-2" class="status-badge">Waiting...</span>
+              <span id="time-2" style="color:var(--text-muted); font-size:12px;"></span>
+            </div>
+            <pre id="res-2" style="border:none; padding:0; min-height:auto;">Click "Send Request" to test</pre>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="info-note">Expected: Status 400 Bad Request ("Username already exists")</span>
+        <button class="btn" onclick="sendRequest(2, '/register')">Send Request</button>
+      </div>
+    </div>
+
+    <!-- Test 3: Login Success -->
+    <div class="card" id="card-3">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="badge-method">POST</span>
+          <span class="endpoint-url">http://localhost:3000/login</span>
+          <span style="font-size:13px; color:var(--text-muted);">(3. login-success.png)</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div>
+          <div class="section-title">Request Body (JSON)</div>
+          <textarea id="req-3">{
+  "username": "nonitha",
+  "password": "Nonitha123"
+}</textarea>
+        </div>
+        <div>
+          <div class="section-title">Live Response</div>
+          <div class="response-box">
+            <div class="response-status-bar">
+              <span id="status-3" class="status-badge">Waiting...</span>
+              <span id="time-3" style="color:var(--text-muted); font-size:12px;"></span>
+            </div>
+            <pre id="res-3" style="border:none; padding:0; min-height:auto;">Click "Send Request" to test</pre>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="info-note">Expected: Status 200 OK with jwt_token</span>
+        <button class="btn" onclick="sendRequest(3, '/login')">Send Request</button>
+      </div>
+    </div>
+
+    <!-- Test 4: Login Wrong Password -->
+    <div class="card" id="card-4">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="badge-method">POST</span>
+          <span class="endpoint-url">http://localhost:3000/login</span>
+          <span style="font-size:13px; color:var(--text-muted);">(4. login-wrong-password.png)</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div>
+          <div class="section-title">Request Body (JSON)</div>
+          <textarea id="req-4">{
+  "username": "nonitha",
+  "password": "WrongPassword123"
+}</textarea>
+        </div>
+        <div>
+          <div class="section-title">Live Response</div>
+          <div class="response-box">
+            <div class="response-status-bar">
+              <span id="status-4" class="status-badge">Waiting...</span>
+              <span id="time-4" style="color:var(--text-muted); font-size:12px;"></span>
+            </div>
+            <pre id="res-4" style="border:none; padding:0; min-height:auto;">Click "Send Request" to test</pre>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="info-note">Expected: Status 400 Bad Request ("Invalid username or password")</span>
+        <button class="btn" onclick="sendRequest(4, '/login')">Send Request</button>
+      </div>
+    </div>
+
+    <!-- Test 5: Login Unknown User -->
+    <div class="card" id="card-5">
+      <div class="card-header">
+        <div class="card-title">
+          <span class="badge-method">POST</span>
+          <span class="endpoint-url">http://localhost:3000/login</span>
+          <span style="font-size:13px; color:var(--text-muted);">(5. login-unknown-user.png)</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <div>
+          <div class="section-title">Request Body (JSON)</div>
+          <textarea id="req-5">{
+  "username": "unknownuser",
+  "password": "AnyPassword123"
+}</textarea>
+        </div>
+        <div>
+          <div class="section-title">Live Response</div>
+          <div class="response-box">
+            <div class="response-status-bar">
+              <span id="status-5" class="status-badge">Waiting...</span>
+              <span id="time-5" style="color:var(--text-muted); font-size:12px;"></span>
+            </div>
+            <pre id="res-5" style="border:none; padding:0; min-height:auto;">Click "Send Request" to test</pre>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <span class="info-note">Expected: Status 400 Bad Request ("Invalid username or password")</span>
+        <button class="btn" onclick="sendRequest(5, '/login')">Send Request</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function sendRequest(num, endpoint) {
+      const reqElem = document.getElementById('req-' + num);
+      const resElem = document.getElementById('res-' + num);
+      const statusElem = document.getElementById('status-' + num);
+      const timeElem = document.getElementById('time-' + num);
+
+      let bodyData;
+      try {
+        bodyData = JSON.parse(reqElem.value);
+      } catch (e) {
+        alert('Invalid JSON in request body');
+        return;
+      }
+
+      statusElem.textContent = 'Sending...';
+      statusElem.className = 'status-badge';
+      const start = performance.now();
+
+      try {
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(bodyData)
+        });
+        const duration = Math.round(performance.now() - start);
+        const data = await response.json();
+
+        statusElem.textContent = `${response.status} ${response.statusText || (response.status === 201 ? 'Created' : response.status === 200 ? 'OK' : 'Bad Request')}`;
+        statusElem.className = `status-badge status-${response.status}`;
+        timeElem.textContent = `${duration} ms`;
+        resElem.textContent = JSON.stringify(data, null, 2);
+      } catch (err) {
+        statusElem.textContent = 'Network Error';
+        statusElem.className = 'status-badge status-400';
+        resElem.textContent = err.message;
+      }
+    }
+
+    async function resetDatabase() {
+      if (!confirm('Reset users database so you can re-run registration tests cleanly?')) return;
+      try {
+        const res = await fetch('/reset-db', { method: 'POST' });
+        const data = await res.json();
+        alert(data.message || 'Database reset successfully');
+      } catch (e) {
+        alert('Failed to reset database: ' + e.message);
+      }
+    }
+
+    async function runAllTests() {
+      await fetch('/reset-db', { method: 'POST' });
+      await sendRequest(1, '/register');
+      await new Promise(r => setTimeout(r, 400));
+      await sendRequest(2, '/register');
+      await new Promise(r => setTimeout(r, 400));
+      await sendRequest(3, '/login');
+      await new Promise(r => setTimeout(r, 400));
+      await sendRequest(4, '/login');
+      await new Promise(r => setTimeout(r, 400));
+      await sendRequest(5, '/login');
+    }
+  </script>
+</body>
+</html>
